@@ -28,10 +28,12 @@ option = st.sidebar.selectbox(
 option = option.split(" ",1)[1]  # remove icon for internal use
 
 # --- FUNCTION TO DISPLAY CARDS WITH BADGES ---
-def display_card(title, content, color="lightblue", badge=None):
+def display_card(title, content, color="lightblue", badge=None, image_url=None):
     badge_html = f"<span style='background-color:#ff6b6b;color:white;padding:3px 8px;border-radius:8px;margin-left:5px'>{badge}</span>" if badge else ""
+    img_html = f"<img src='{image_url}' width='80' style='float:right;margin-left:10px;border-radius:10px'>" if image_url else ""
     st.markdown(f"""
-    <div style='background-color:{color}; padding:15px; border-radius:10px; margin-bottom:10px'>
+    <div style='background-color:{color}; padding:15px; border-radius:10px; margin-bottom:10px; overflow:hidden'>
+        {img_html}
         <h4>{title} {badge_html}</h4>
         <p>{content}</p>
     </div>
@@ -118,17 +120,41 @@ elif option=="Student Assistant":
 # --- COLLEGE DIRECTORY PAGE ---
 elif option=="College Directory":
     st.header("College Directory")
-    directory={"HODs":[{"Name":"Dr. Rajesh Kumar","Department":"IT","Room":"HOD Office","Contact":"raj@college.edu"}],
-               "Faculty":[{"Name":"Prof. Suresh","Department":"IT","Room":"A102","Contact":"suresh@college.edu"}],
-               "Transport":[{"Name":"Mr. Ravi","Role":"Bus Coordinator","Contact":"ravi@college.edu"}]}
-    search = st.text_input("Search by name or department")
-    category = st.selectbox("Select Category", directory.keys())
-    col1,col2=st.columns(2)
-    for idx,person in enumerate(directory[category]):
-        if search.lower() not in person['Name'].lower() and search.lower() not in person.get("Department","").lower(): continue
-        col=col1 if idx%2==0 else col2
-        with col:
-            display_card(person['Name'],f"Dept/Role: {person.get('Department',person.get('Role','N/A'))}\nRoom: {person.get('Room','N/A')}\nContact: {person['Contact']}",color="#a1caff")
+    
+    # Full IT Faculty Data
+    faculty_IT_full = {
+        "Information Technology": [
+            {"Name":"Dr. T. Anil Kumar","Designation":"Professor & HOD","Room":"I101","Email":"tanilkumar@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/TAnilKumar.jpg"},
+            {"Name":"Dr. Niteesha Sharma","Designation":"Assistant Professor","Room":"I105","Email":"niteesha@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/NiteeshaSharma.jpg"},
+            {"Name":"Dr. G. L. AnandBabu","Designation":"Associate Professor","Room":"I106","Email":"ganandbabu@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/GLAnandBabu.jpg"},
+            {"Name":"Dr. D. Narendhar Singh","Designation":"Associate Professor","Room":"I107","Email":"dnarendhar@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/DNarendharSingh.jpg"},
+            {"Name":"Mr. B. Pruthviraj Goud","Designation":"Assistant Professor","Room":"I108","Email":"pruthviraj@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/PruthvirajGoud.jpg"},
+            {"Name":"Mr. K. Praveen Kumar","Designation":"Assistant Professor","Room":"I109","Email":"praveenkumar@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/PraveenKumar.jpg"},
+            {"Name":"Mrs. Y. Sowjanya","Designation":"Assistant Professor","Room":"I110","Email":"sowjanya@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/Sowjanya.jpg"},
+            {"Name":"Mrs. Lakshmi Prasanna B","Designation":"Assistant Professor","Room":"I111","Email":"lakshmiprasanna@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/LakshmiPrasanna.jpg"},
+            {"Name":"Mr. G. Sai Krishna","Designation":"Assistant Professor","Room":"I112","Email":"saikrishna@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/SaiKrishna.jpg"},
+            {"Name":"Mr. K. Venkateswarlu","Designation":"Assistant Professor","Room":"I113","Email":"venkateswarlu@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/Venkateswarlu.jpg"},
+            {"Name":"Mrs. T. Ashalatha","Designation":"Assistant Professor","Room":"I114","Email":"ashalatha@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/Ashalatha.jpg"},
+            {"Name":"Mrs. N. Naga Lakshmi","Designation":"Assistant Professor","Room":"I115","Email":"nagalakshmi@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/NagaLakshmi.jpg"},
+            {"Name":"Mr. G. Sekhar Reddy","Designation":"Assistant Professor","Room":"I116","Email":"sekharreddy@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/SekharReddy.jpg"},
+            {"Name":"Mr. B. Ravi Raju","Designation":"Assistant Professor","Room":"I117","Email":"raviraju@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/RaviRaju.jpg"},
+            {"Name":"Mr. D. Srisailam","Designation":"Assistant Professor","Room":"I118","Email":"srisailam@anurag.edu.in","Image":"https://anurag.edu.in/wp-content/uploads/2022/06/Srisailam.jpg"}
+        ]
+    }
+
+    search = st.text_input("Search by name or designation")
+    col1, col2 = st.columns(2)
+    for idx, person in enumerate(faculty_IT_full["Information Technology"]):
+        if search.lower() not in person['Name'].lower() and search.lower() not in person.get("Designation","").lower():
+            continue
+        col = col1 if idx % 2 == 0 else col2
+        display_card(
+            title=person['Name'],
+            content=f"Dept: Information Technology\nRoom: {person.get('Room','N/A')}\nEmail: {person.get('Email','N/A')}",
+            badge=person.get("Designation",""),
+            color="#a1caff",
+            image_url=person.get("Image")
+        )
 
 # --- STARTUP & PROJECTS HUB PAGE ---
 elif option=="Startup & Projects Hub":
@@ -147,8 +173,7 @@ elif option=="Startup & Projects Hub":
         if search_proj.lower() not in proj['Title'].lower() and search_proj.lower() not in proj.get("Team","").lower(): continue
         col=col1 if idx%2==0 else col2
         badge_color={"Completed":"✔️","Sponsored":"💰","Seeking Mentorship":"🧑‍🏫","Open":"🟢"}.get(proj['Status'],"")
-        with col:
-            display_card(proj['Title'],f"Category: {proj['Category']}\nTeam: {proj.get('Team','N/A')}\nStatus: {proj['Status']}\nDescription: {proj.get('Description','')}",color="#d4f4dd",badge=badge_color)
+        display_card(proj['Title'],f"Category: {proj['Category']}\nTeam: {proj.get('Team','N/A')}\nStatus: {proj['Status']}\nDescription: {proj.get('Description','')}",color="#d4f4dd",badge=badge_color)
 
 # --- REPORT ISSUE PAGE ---
 elif option=="Report an Issue":
@@ -158,6 +183,6 @@ elif option=="Report an Issue":
     category=st.selectbox("Category",["Facilities","Classroom","Lab","Other"])
     uploaded_image=st.file_uploader("Upload photo",type=["jpg","png","jpeg"])
     if st.button("Submit Issue") and issue_title.strip()!="" and issue_desc.strip()!="":
-        display_card(issue_title,f"Description: {issue_desc}\nCategory: {category}",color="#ff6b6b",badge="⚠️")
+        display_card(issue_title,f"Description: {issue_desc}\nCategory: {category}",color="#ff6b6b",badge="⚠️", image_url=uploaded_image)
         if uploaded_image: st.image(uploaded_image, caption="Uploaded Photo", use_column_width=True)
         st.info("Maintenance team will review soon.")
